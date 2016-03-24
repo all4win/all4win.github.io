@@ -1,0 +1,369 @@
+<html>
+<head>
+<title>Computer Vision Project 3: Camera Calibration and Fundamental Matrix Estimation with RANSAC</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1> Tiancheng Gong <span style="color: #DE3737">(tgong7)</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2>CS 4495 / 6476 Project 3: Camera Calibration and Fundamental Matrix Estimation with RANSAC</h2>
+
+<div style="float: right; padding: 20px">
+<img src="results\Extra\part3\vis_arrows_1_with_normalization.jpg" height="350pixels"/>
+<p style="font-size: 16px" align="center">Matching based on Fundamental Matrix</p>
+</div>
+
+<h2>Overview</h2>
+<p> 	The objective of this project is to apply the knowledge of camera and scene geometry. In general, the project consists of three parts: The first part is to estimate the camera projection matrix which maps the 3D coordinates (real world) to 2D coordinates (image), and thus find the camera center of the view. The second part is to estimate the fundamental matrix based on the input 2D point pairs. The final part is to estimate the fundamental matrix using the RANSAC based on the unreliable point pairs given by SIFT matches.
+
+<ol><i>
+<li><a href="#L1">Estimate the Projection Matrix and Camera Center</a></li>
+<li><a href="#L2">Estimate the Fundamental Matrix based on Point Pairs</a></li>
+<li><a href="#L3">Estimate the best Fundamental Matrix using RANSAC</a></li>
+<li><a href="#L4">Extra: Normalization</a></li>
+</i></ol>
+
+<div style="clear:both">
+<h2 id="L1">Estimate the Projection Matrix and Camera Center</h2>
+
+<p> 	The projection matrix is a linear transformation which aims to convert the real world 3D points to image 2D points. To estimate the projection matrix is to solve the M using linear algebra on the given point pairs. The homogeneous coordinates of the equation for moving from 3D world to 2D camera coordinates is shown below: </p>
+
+<div align="center">
+<img src="results\formula_1.gif" align="center"/>
+</div></p>
+
+<p>		To fix the scale for the matrix, I set the last term in the matrix, which is <b>m_34</b>, as 1. Then I solve the matrix based on the given point pairs. After I get the matrix, I simply computed the camera center using the formular: <img src="results\formula_2.gif"/>. The results of part one is shown below. </p>
+
+<h3>Table 1: Projection Matrix and Camera Center Evaluation</h3>
+<table border=1>
+<tr>
+<td> <img src="results\part1\projected_points_1.jpg" width="100%"/> </td>
+<td> <img src="results\part1\camera_center_1.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Point Pairs 1: Projection Matrix Evaluation 2D</td>
+<td align="center"> Point Pairs 1: Projection Matrix Evaluation 3D and Camera Center</td>
+</tr>
+
+<tr>
+<td> <img src="results\part1\projected_points_2.jpg" width="100%"/> </td>
+<td> <img src="results\part1\camera_center_2.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Point Pairs 2: Projection Matrix Evaluation 2D</td>
+<td align="center"> Point Pairs 2: Projection Matrix Evaluation 3D and Camera Center</td>
+</tr>
+</table>
+
+<br />
+<h2 id="L2">Estimate the Fundamental Matrix based on Point Pairs</h2>
+
+<p>		Like part one, part two is to estimate the fundamental matrix, which is a linear transformation between 2 images, both 2D points. The homogeneous coordinates of the equation for moving from 3D world to 2D camera coordinates is shown below: </p>
+
+<p>
+<div align="center">
+<img src="results\formula_3.gif" align="center"/>
+</div></p>
+
+<p>		Similarly I set the last term as 1 to fix the scale, and then we only need 8 pairs to solve the matrix since we only have 8 unknowns. After solving the matrix, I need to set the least singular value in Σ to zero thus generating Σ2. The results of part two is shown below. </p>
+
+<h3>Table 2: Fundamental Matrix Estimation</h3>
+<table border=1>
+<tr>
+<td> <img src="results\part2\part2_fig1_without_normalization.jpg" width="100%"/> </td>
+<td> <img src="results\part2\part2_fig2_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Image No.1</td>
+<td align="center"> Image No.2</td>
+</tr>
+</table>
+
+<br />
+<h2 id="L3">Estimate the best Fundamental Matrix using RANSAC</h2>
+<p> 	The final part is to find the best fundamental matrix using the RANSAC based on the unreliable point pairs given by SIFT matches. I interatively pick a mount of points as a sample and calculate the fundamental matrix of the sample and apply the matrix on all points. I set a threshold as the criteria. Any points with the distance from the expected value drived from fundamentall matrix are considered as inliers, and others are outliers. The best matrix is the one has the most inliers compared with other matrices. Using the best estimation, I find 30 pairs with the greatest confidence and show them on the images. The results are shown below, the parallel matchings are reliable while the others are most incorrect.</p>
+
+
+<h3>Table 3: Matching Results Using the most confident Fundamental Matrix</h3>
+<table border=1>
+<tr>
+<td> <img src="results\part3\Mount Rushmore\left_without_normalization.jpg" width="100%"/> </td>
+<td> <img src="results\part3\Mount Rushmore\right_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Mount Rushmore IMG 1</td>
+<td align="center"> Mount Rushmore IMG 2</td>
+</tr>
+</table>
+
+<table border=1>
+<tr>
+<td> <img src="results\part3\Mount Rushmore\vis_arrows_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Confident Matching (80% accuracy)</td>
+</tr>
+</table>
+
+<br/>
+<h2 id="L4">Extra: Normalization</h2>
+
+<p> 	The results can be improved by normalize the coordinates of the points before solve the fundamental matrix. I pick the square root of 2 as STD and adjust the points based on center (the mean of the points) and the standard deviation ratio. The basic formulaof the normalization is shown below:</b>
+</p>
+<p>
+<div align="center">
+<img src="results\formula_4.gif" align="center"/>
+</div></p>
+
+<pre><code>% Code for Normalization
+% normalization matrix
+S_a = diag([1, 1, 1]);
+S_b = diag([1, 1, 1]);
+C_a = diag([1, 1, 1]);
+C_b = diag([1, 1, 1]);
+ca = mean(Points_a);
+cb = mean(Points_b);
+C_a(7: 8) = -ca(1 : 2);
+C_b(7: 8) = -cb(1 : 2);
+std_cof = 2 ^ (0.5);
+std_a = std(Points_a(:,1) - ca(1)) + std(Points_a(:,2) - ca(2));
+std_b = std(Points_b(:,1) - cb(1)) + std(Points_b(:,2) - cb(2));
+sa = std_cof / std_a;
+sb = std_cof / std_b;
+S_a(1) = sa;
+S_a(5) = sa;
+S_b(1) = sb;
+S_b(5) = sb;
+T_a = S_a * C_a;
+T_b = S_b * C_b;
+Points_a(:, 3) = 1;
+Points_b(:, 3) = 1;
+
+% normalize the points
+Points_a = T_a * Points_a';
+Points_a = Points_a';
+Points_b = T_b * Points_b';
+Points_b = Points_b';
+
+...
+
+% normalize the fundamental matrix
+F_matrix = T_b' * F_matrix * T_a;
+</code></pre>
+
+
+<p> 	After normalization, the results are better the original ones. Results of part two are slightly improved while the results of part are much better.</b>
+
+<h3>Table 4: Results with Normalization (Part two)</h3>
+<table border=1>
+<tr>
+<td> <img src="results\Extra\part2\part2_fig1_without_normalization.jpg" width="100%"/> </td>
+<td> <img src="results\Extra\part2\part2_fig1_with_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Image No.1 without Normalization</td>
+<td align="center"> Image No.1 with Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part2\part2_fig2_without_normalization.jpg" width="100%"/> </td>
+<td> <img src="results\Extra\part2\part2_fig2_with_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Image No.2 without Normalization</td>
+<td align="center"> Image No.2 with Normalization</td>
+</tr>
+</table>
+
+</br>
+
+<h3>Table 4: Results with Normalization (Part three)</h3>
+
+<table border=1>
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_1_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Mount Rushmore Matching without Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_1_with_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Mount Rushmore Matching without Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_2_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Notre Dame Matching without Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_2_with_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Notre Dame Matching without Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_3_without_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Episcopal Gaudi Matching without Normalization</td>
+</tr>
+
+<tr>
+<td> <img src="results\Extra\part3\vis_arrows_3_with_normalization.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Episcopal Gaudi Matching without Normalization</td>
+</tr>
+</table>
+
+</br>
+</div>
+</body>
+</html>

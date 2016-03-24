@@ -113,6 +113,16 @@ h3 {
 	letter-spacing: 1px;
 }
 
+a.github:link, a.github:visited {
+	color: #A0A0A0;
+	text-decoration: none;
+}
+
+a.github:hover {
+	color: #000;
+	text-decoration: underline;
+}
+
 a:link, a:visited {
 	color: #CC6600;
 	text-decoration: none;
