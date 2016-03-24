@@ -1,0 +1,316 @@
+<html>
+<head>
+<title>Computer Vision Project 1: Image Filtering and Hybrid Images</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1> Tiancheng Gong <span style="color: #DE3737">(tgong7)</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2>CS 4495 / 6476 Project 1: Image Filtering and Hybrid Images</h2>
+
+<div style="float: right; padding: 20px">
+<img src="Results\cat-dog\hybrid_image.jpg" width="350pixels"/>
+<p style="font-size: 16px" align="center">Cat-Dog</p>
+</div>
+
+<h2>Introduction</h2>
+<p> 	This project focuses on the application of fundamental filters on the given images. The image filters implemented within this project are <b>identify_filter, blur_filter, large_blur_filter, sobel_filter, laplacian_filter and high_pass_filter</b>. With these filters, we can then build the hybrid images by combining <b>high frequency image</b> and <b>low frequency image</b>.</p>
+
+<ol><i>
+<li><a href="#L1">Preprocess the Image</a></li>
+<li><a href="#L2">Implement Filters on Image</a></li>
+<li><a href="#L3">Constrcut Hybrid Image</a></li>
+<li><a href="#L4">Display More Hybrid Images</a></li>
+</i></ol>
+
+<div style="clear:both">
+<h2 id="L1">Preprocess the Image</h2>
+
+<p> 	Before applying the filters on the image, we need to preprocess the image by padding the sides with extra pixels, otherwise we cannot calculate the new values for pixels on the sides. To accomplish this goal, we can simply pad the boundaries with <b>zero values. The padding width is determinded by the filter's size.</b></p>
+
+<pre><code>% pad the boundaries with zero values 
+[m, n] = size(filter);
+pad_image = padarray(image, [floor(m / 2), floor(n / 2)]);
+</code></pre>
+
+<br />
+<h2 id="L2">Implement Filters on Image</h2>
+
+<p> 	Apply the filtering formula to calculate the value of the dot product of the matrix of the image and the filter matrix:
+<div align="center">
+<img src="formula.jpg" height="50pixels" align="center"/>
+</div></p>
+
+<pre><code>% use three for loop to calculate the new value for each pixel
+[r, c, l] = size(image);
+for layer = 1: l
+    for col = 1: c
+        for row = 1: r
+            value = sum(sum(pad_image(row : (row + m - 1), col : (col + n - 1), layer) .* filter));
+            output(row, col, layer) = value;
+        end
+    end
+end
+</code></pre>
+
+<br />
+<h3>Table 1: Filter Results</h3>
+<table border=1>
+<tr>
+<td> <img src="Results\filters\identity_image.jpg"/> </td>
+<td> <img src="Results\filters\blur_image.jpg"/> </td>
+<td> <img src="Results\filters\large_blur_image.jpg"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Identity Image </td>
+<td align="center"> Blur Image </td>
+<td align="center"> Large Blur Image </td>
+</tr>
+
+<tr>
+<td> <img src="Results\filters\sobel_image.jpg"/> </td>
+<td> <img src="Results\filters\laplacian_image.jpg"/> </td>
+<td> <img src="Results\filters\high_pass_image.jpg"/> </td>
+</tr>
+
+<tr>
+<td align="center"> Sobel Image </td>
+<td align="center"> Laplacian Image </td>
+<td align="center"> High Pass Image </td>
+</tr>
+</table>
+
+<br />
+<h2 id="L3">Constrcut Hybrid Image</h2>
+<p> 	The hybrid image is constructed by combining two images filtered by high-pass filter and low-pass filter respectively. The key here is the cutoff frequency used to determine which part of the image can be preserved. For the first image, apply the filter to <b>wipe off the components with higher frequency than the threshold and preserve the low frequency part</b>. On the other hand, apply the same filter to the second image, and then <b>subtract the filtered image from the original image to get rid of the low frequency part</b>. Combine the images and get the hybrid image. Since the first image now only has low frequency part, it can be recognized when distance is large. The second image can be recognized better when the hybrid image is colse to eyes because high frequency part dominates in short distance.</p>
+
+<pre><code>% set the filter, apply on images and combine them
+filter = fspecial('Gaussian', cutoff_frequency*4+1, cutoff_frequency);
+low_frequencies = my_imfilter(image1, filter);
+high_frequencies = image2 - my_imfilter(image2, filter);
+hybrid_image = low_frequencies + high_frequencies;
+</code></pre>
+
+<br />
+<h3>Table 2: Intermediate Results</h3>
+<table border=1>
+<tr>
+<td> <img src="data\dog.bmp"/> </td>
+<td> <img src="data\cat.bmp"/> </td>
+</tr>
+
+<tr>
+<td align="center"> The First Image (Original) </td>
+<td align="center"> The Second Image (Original) </td>
+</tr>
+
+<tr>
+<td> <img src="Results\cat-dog\low_frequencies.jpg"/> </td>
+<td> <img src="Results\cat-dog\high_frequencies.jpg"/> </td>
+</tr>
+
+<tr>
+<td align="center"> The First Image (Low Frequency) </td>
+<td align="center"> The Second Image (High Frequency) </td>
+</tr>
+
+</table>
+
+<br/>
+<h3>Final Hybrid Result</h3>
+<div align="left">
+<img src="Results\cat-dog\hybrid_image_scales.jpg"/>
+<p style="font-size: 20px" align="center">Final Hybrid Result</p>
+</div>
+
+<br />
+<h2 id="L4">Display More Hybrid Images</h2>
+
+<h3>Table 3: More Hybrid Images</h3>
+
+<table border=1>
+<tr>
+<td>
+<img src="data\bird.bmp" width="33%"/>
+<img src="data\plane.bmp"  width="33%"/>
+<img src="Results\plane-bird\hybrid_image.jpg" width="33%"/>
+</td>
+</tr>
+
+<tr>
+<td/>
+</tr>
+
+<tr>
+<td>
+<img src="data\marilyn.bmp" width="33%"/>
+<img src="data\einstein.bmp"  width="33%"/>
+<img src="Results\einstein-marilyn\hybrid_image.jpg" width="33%"/>
+</td>
+</tr>
+
+<tr>
+<td/>
+</tr>
+
+<tr>
+<td>
+<img src="data\fish.bmp" width="33%"/>
+<img src="data\submarine.bmp"  width="33%"/>
+<img src="Results\submarine-fish\hybrid_image.jpg" width="33%"/>
+</td>
+</tr>
+
+<tr>
+<td/>
+</tr>
+
+<tr>
+<td>
+<img src="data\motorcycle.bmp" width="33%"/>
+<img src="data\bicycle.bmp"  width="33%"/>
+<img src="Results\bicycle-motorcycle\hybrid_image.jpg" width="33%"/>
+</td>
+</tr>
+
+</table>
+
+</br>
+<div style="clear:both" >
+<h2> Conclusion and Reflection</h2>
+<p> 	The preprocessing of the images is just to pad the boundaries of the image with zero values, which works out well for this project. The reason for the success of this kind of preprocessing is the small size of the filter. The padding width determined by the filter size is also small, thus the influence of the zero values is not significant. However, <b>if the filter size is big, it would be better choice to reflect across edges.</b>
+</br></br>
+The hybrid image is constrcuted by combining a low frequency image and a high frequency image. The high frequency components of a image are the edges where the values of the pixels varies sharply, and the low frequency components are blurred color blocks without clear edges among them. When the image is close to the observer, the edge details are well caught by the eyes while the color blocks of image dominating when the image is far away. <b>Thus we should choose the image with more sharp edges as the high frequency part and the image with less color blocks as the low frequency part to make a appropriate hybrid image.</b>
+</p>
+</div>
+</body>
+</html>

@@ -105,6 +105,14 @@ h2 {
 	letter-spacing: 1px;
 }
 
+h3 {
+	color: #4C58A4;
+	margin-left: 0.5em;
+	padding-bottom: 4px;
+	font-size: 120%;
+	letter-spacing: 1px;
+}
+
 a:link, a:visited {
 	color: #CC6600;
 	text-decoration: none;
