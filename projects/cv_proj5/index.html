@@ -1,0 +1,304 @@
+<html>
+<head>
+<title>Computer Vision Project 5: Face Detection with a Sliding Window</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 1160px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 1160px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+table td img {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1> Tiancheng Gong <span style="color: #DE3737">(tgong7)</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2> Project 5: Face Detection with a Sliding Window</h2>
+
+<div style="float: left; padding: 20px">
+<img src="class scene.jpg" />
+<p style="font-size: 20px" align="center">Face Detection of a Class Scene</p>
+</div>
+
+<h2>Overview</h2>
+<p> 	This project is aimed to implement the face detection algorithm using the sliding window. To complete the project, I followed the following pipeline as suggested by the course web:</p>
+
+<ol><i>
+<li><a href="#L1">Extract the Positive and Negative Features</a></li>
+<li><a href="#L2">Train the SVM Classifier</a></li>
+<li><a href="#L3">Apply the Learned Model on Test Set</a></li>
+<li><a href="#L4">Detection Display</a></li>
+</i></ol>
+
+
+</br>
+<h2 id="L1">Extract the Positive and Negative Features</h2>
+<p> 	In this part, I represented features of faces or non-faces with HOG using vl_hog in the vl_feat fuctions. The feature size is fixed as 36x36 while the cell size of the histograms can be set to different level to achieve different performance. I tried three different cell size, which are 3, 4 and 6. Usually the smaller the cell size, the better the result. Of course, smaller step size also takes more running time.</p>
+
+<h3>Extract the Positive Features</h3>
+<p>		Since the size of each positive face image is 36x36, which is exactly the feature size, by calling vl_hog on given images can return the positive data. To achieve better performance, I also extracted the features of the mirrored images based on the original images. The total size of my positive data is thus 6713 x 2 = 13426.</p>
+
+<h3>Extract the Negative Features</h3>
+<p>		Since the size of each non-face image is not fixed, before calling vl_hog on each image, I ramdomly picked the start points of the feature boxes. Also, to obtain negaitive data under different scaling, I also scaled down each image by the factor of 0.9 after each extaction process. I repetitively did so until the image is not big enough for a single extration.</p>
+
+<h3>Table 1: Results of HOG of different Cell Size</h3>
+<div align="center">
+<table border=1>
+
+<tr>
+<td> <img src="results/step_6/hog_template.png" width="100%"/> </td>
+<td> <img src="results/step_4/hog_template.png" width="100%"/> </td>
+<td> <img src="results/step_3/hog_template.png" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 6 </td>
+<td> step size = 4 </td>
+<td> step size = 3 </td>
+</tr>
+
+</table>
+</div>
+
+
+</br>
+<h2 id="L2">Train the SVM Classifier</h2>
+
+<p>		This step simply called the build-in svm learning function.</p>
+
+<h3>Table 2: Learning Results</h3>
+<div align="center">
+<table border=1>
+
+<tr>
+<td> <img src="results/step_6/learning.jpg" width="100%"/> </td>
+<td> <img src="results/step_4/learning.jpg" width="100%"/> </td>
+<td> <img src="results/step_3/learning.jpg" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 6 </td>
+<td> step size = 4 </td>
+<td> step size = 3 </td>
+</tr>
+
+</table>
+</div>
+
+
+
+</br>
+<h2 id="L3">Apply the Learned Model on Test Set</h2>
+<p>		I applied the sliding window approach to iterate all possible boxes of faces. If the confidence of a box is greater than some threshold, it is kept as a face box. To make sure that the small faces are not missed during the detectin, I scale down each test image by the feactor of 0.9 after each thorough detection. After I got all face boxes, I applie the non-max suppression on the boxes to gid rid of the repetitions. <b>It turns out to be that the AP goes higher when cell size is smaller. AP is also incresed when lower threshold is used, but the number of false positive detections also increases.</b></p>
+
+
+<h3>Table 3: Face Detection Results</h3>
+<div align="center">
+<table border=1>
+
+<tr>
+<td> Variable </td>
+<td> Average Precision</td>
+<td> Recall</td>
+<td> Sample</td>
+</tr>
+
+
+<tr>
+<td> step size = 6; threshold = 0.6 </td>
+<td> <img src="results/step_6/average_precision_0.6.png" width="100%"/> </td>
+<td> <img src="results/step_6/recall_0.6.jpg" width="100%"/> </td>
+<td> <img src="results/step_6/detections_class57_0.6.png" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 6; threshold = 0.75 </td>
+<td> <img src="results/step_6/average_precision_0.75.png" width="100%"/> </td>
+<td> <img src="results/step_6/recall_0.75.jpg" width="100%"/> </td>
+<td> <img src="results/step_6/detections_class57_0.75.png" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 4; threshold = 0.6 </td>
+<td> <img src="results/step_4/average_precision_0.6.png" width="100%"/> </td>
+<td> <img src="results/step_4/recall_0.6.jpg" width="100%"/> </td>
+<td> <img src="results/step_4/detections_class57_0.6.png" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 4; threshold = 0.75 </td>
+<td> <img src="results/step_4/average_precision_0.75.png" width="100%"/> </td>
+<td> <img src="results/step_4/recall_0.75.jpg" width="100%"/> </td>
+<td> <img src="results/step_4/detections_class57_0.75.png" width="100%"/> </td>
+</tr>
+
+<tr>
+<td> step size = 3; threshold = 0.75 </td>
+<td> <img src="results/step_3/average_precision.png" width="100%"/> </td>
+<td> <img src="results/step_3/recall.jpg" width="100%"/> </td>
+<td> <img src="results/step_3/detections_class57.png" width="100%"/> </td>
+</tr>
+
+
+</table>
+</div>
+
+</br>
+<h2 id="L4">Face Detection of a Class Scene</h2>
+<p> To get rid of most false positive detections, I reset the threshold as 1.3 for this part.</p>
+
+
+<center>
+	<span style="font-size: 20px"> Extra scenes display</span>
+<select id = "selected" onchange="replacePic()">
+	<option value="results/extra scenes/01.jpg"> Scene 01</option>
+	<option value="results/extra scenes/02.jpg"> Scene 02</option>
+	<option value="results/extra scenes/03.jpg"> Scene 03</option>
+	<option value="results/extra scenes/04.jpg"> Scene 04</option>
+	<option value="results/extra scenes/05.jpg"> Scene 05</option>
+	
+</select>
+</center>
+<center>
+<img id = "scenePic" src="results/extra scenes/01.jpg" />
+</center>
+
+
+<script>
+    function replacePic(){
+        var content = document.getElementById("selected");
+		var pic = document.getElementById("scenePic");
+		pic.src = content.value;
+    }
+</script>
+
+
+</br>
+</body>
+</html>
