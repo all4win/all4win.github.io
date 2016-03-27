@@ -16,7 +16,7 @@
 		{
 			name: "Computer Vision Project 2: Local Feature Matching",
 			page_path: "projects\\cv_proj2\\index.html",
-			img_path: "projects\\cv_proj2\\Results\\Mount Rushmore\\intersting_points.jpg",
+			img_path: "projects\\cv_proj2\\intersting_points.jpg",
 			github_link: "https://github.com/all4win/Computer_Vision_Proj2_Local_Feature_Matching",
 			description: "The objective of this project is to find the matches between local features of two images. In general, the matching process can be divided into three steps: The first step is to find the corner points using a Harris corner detector, apply the threshold, and then pick the local maxima of each connected component. The second step is to calculate the SIFT descriptors for the interesting points. The final step is to calculate the feature differences and select point pairs according to the threshold ratio.",
 		},
