@@ -4,7 +4,7 @@ body {
 	color: black;
 	background-color: #eee;
 	line-height: 130%;
-	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-family: Verdana, Geneva, sans-serif;
 	text-align: center;
 }
 
@@ -85,6 +85,10 @@ body {
 
 * html #content { padding-top: 1.8em; } /* Set padding top in IE to 20px */
 
+iframe {
+    position: relative;
+}
+
 #footer {
 	margin: 0 auto;
 	padding: 2px 1%;
@@ -134,9 +138,15 @@ a:hover {
 }
 
 p {
+	width: 70%;
 	margin-left: 1em;
 	letter-spacing: 0.7px;
 	line-height:25px;
+}
+
+#projIMG{
+	padding: 10px;
+	float:right;
 }
 
 .fade.ng-enter {

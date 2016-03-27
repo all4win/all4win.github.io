@@ -53,10 +53,15 @@
 					<p>
 						<ul>
 							<li ng-repeat="CVproduct in resumeCtrl.CVproducts">
-								<a ng-href="{{CVproduct.page_link}}" target="_blank">{{CVproduct.name}}</a> 
+								<div id="projIMG" ng-if="buttonStatus" class="fade" style="padding: 10px; float:right">
+									<img src="{{CVproduct.img_path}}" height="220px"/>
+								</div>
+								<a ng-href="{{CVproduct.page_path}}" target="_blank">{{CVproduct.name}}</a> 
 								<a href="{{CVproduct.github_link}}" target="_blank" class = "github">[github]</a>
 								<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "Hide Description" || "Show Description"}}</md-button>
-								<div ng-if="buttonStatus" class="fade">{{CVproduct.description}}</br></br></div>
+								<div ng-if="buttonStatus" class="fade">
+									<p>{{CVproduct.description}}</br></br></p>
+								</div>
 							</li>
 						</ul>
 					</p>
