@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="resume">
 
 	<head>
 		<title>Tiancheng's Homepage</title>
@@ -8,8 +8,15 @@
 		<meta name="Keywords" content="Tiancheng Gong" />
 		<meta name="Description" content="Tiancheng's Homepage"/>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+		<script type="text/javascript" src="app.js"></script>
 		<link rel="stylesheet" type="text/css" href="mystyles.css" />
-		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
 
 	<body id="altbody">
@@ -30,35 +37,40 @@
 				</ul>
 			</div>
 		</div>
-		<div id="content">
-			<h2>Resume</h2>
-			<div id="resume" position = "relative" align = "center">
-				<iframe src="resume/resume.pdf" style="width:70%; height:1200px;" frameborder="5"></iframe>
-				<p><a href="resume/resume.pdf" download="w3logo">Download My Resume(PDF)</a></p>
+		<div id="content" ng-controller="ResumeController as resumeCtrl" ng-cloak>
+			<div id="resume">
+				<h2>Resume</h2>
+				<div id="resume window" position = "relative" align = "center">
+					<iframe src="resume/resume.pdf" style="width:70%; height:1200px;" frameborder="5"></iframe>
+					<p><a href="resume/resume.pdf" download="w3logo">Download My Resume(PDF)</a></p>
+				</div>
 			</div>
 
-			<h2>Projects</h2>
-			<h3>Computer Vision Projects:</h3>
-			<p>
-				<ul>
-					<li><a href="projects\cv_proj1\index.html" target="_blank">Computer Vision Project 1: Image Filtering and Hybrid Images</a> <a href="https://github.com/all4win/Computer_Vision_Proj1_Image_Filtering_and_Hybrid_Images" target="_blank" class = "github">[github]</a></li>
-				</ul>
-				<ul>
-					<li><a href="projects\cv_proj2\index.html" target="_blank">Computer Vision Project 2: Local Feature Matching</a> <a href="https://github.com/all4win/Computer_Vision_Proj2_Local_Feature_Matching" target="_blank" class = "github">[github]</a></li>
-				</ul>
-				<ul>
-					<li><a href="projects\cv_proj3\index.html" target="_blank">Computer Vision Project 3: Camera Calibration and Fundamental Matrix Estimation with RANSAC</a> <a href="https://github.com/all4win/Computer_Vision_Proj3_Camera_Calibration_and_Fundamental_Matrix_Estimation_with_RANSAC" target="_blank" class = "github">[github]</a></li>
-				</ul>
-				<ul>
-					<li><a href="projects\cv_proj4\index.html" target="_blank">Computer Vision Project 4: Scene Recognition with Bag of Words</a> <a href="https://github.com/all4win/Computer_Vision_Proj4_Scene_Recognition_with_Bag_of_Words" target="_blank" class = "github">[github]</a></li>
-				</ul>
-				<ul>
-					<li><a href="projects\cv_proj5\index.html" target="_blank">Computer Vision Project 5: Face Detection with a Sliding Window</a> <a href="https://github.com/all4win/Computer_Vision_Proj5_Face_Detection_with_a_Sliding_Window" target="_blank" class = "github">[github]</a></li>
-				</ul>
-				<ul>
-					<li><a href="projects\cv_proj6\index.html" target="_blank">Computer Vision Project 6: Deep Learning</a> <a href="https://github.com/all4win/Computer_Vision_Proj6_Deep_Learning" target="_blank" class = "github">[github]</a></li>
-				</ul>
-			</p>
+			<div id="projects">
+				<h2>Projects</h2>
+				<div id="cv">
+					<h3>Computer Vision Projects:</h3>
+					<p>
+						<ul>
+							<li ng-repeat="CVproduct in resumeCtrl.CVproducts">
+								<a ng-href="{{CVproduct.page_link}}" target="_blank">{{CVproduct.name}}</a> 
+								<a href="{{CVproduct.github_link}}" target="_blank" class = "github">[github]</a>
+								<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "Hide Description" || "Show Description"}}</md-button>
+								<div ng-if="buttonStatus" class="fade">{{CVproduct.description}}</br></br></div>
+							</li>
+						</ul>
+					</p>
+				</div>
+				</br>
+				<div id="gba">
+					<h3>GBA Game (C):</h3>
+					<p>
+						<ul>
+							<li><a href="projects\gba\index.html" target="_blank">GBA Game: Be A Man V1.0</a> <a href="https://github.com/all4win/gba_game" target="_blank" class = "github">[github]</a></li>
+						</ul>
+					</p>
+				</div>
+			</div>
 		</div>
 
 		<div id="footer">
