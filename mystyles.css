@@ -142,6 +142,7 @@ p {
 	margin-left: 1em;
 	letter-spacing: 0.7px;
 	line-height:25px;
+	white-space: pre-line;
 }
 
 #projIMG{

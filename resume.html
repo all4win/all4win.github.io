@@ -58,7 +58,7 @@
 								</div>
 								<a ng-href="{{CVproduct.page_path}}" target="_blank">{{CVproduct.name}}</a> 
 								<a href="{{CVproduct.github_link}}" target="_blank" class = "github">[github]</a>
-								<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "Hide Description" || "Show Description"}}</md-button>
+								<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "- Hide Description" || "+ Show Description"}}</md-button>
 								<div ng-if="buttonStatus" class="fade">
 									<p>{{CVproduct.description}}</br></br></p>
 								</div>
