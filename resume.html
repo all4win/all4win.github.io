@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="resume">
+<!DOCTYPE html>
+<html xml:lang="en" lang="en" ng-app="resume">
 
 	<head>
 		<title>Tiancheng's Homepage</title>
@@ -50,30 +50,30 @@
 				<h2>Projects</h2>
 				<div id="cv">
 					<h3>Computer Vision Projects:</h3>
-					<p>
-						<ul>
-							<li ng-repeat="CVproduct in resumeCtrl.CVproducts">
-								<div id="projIMG" ng-if="buttonStatus" class="fade">
-									<img src="{{CVproduct.img_path}}" height="220px"/>
-								</div>
-								<a ng-href="{{CVproduct.page_path}}" target="_blank">{{CVproduct.name}}</a> 
-								<a href="{{CVproduct.github_link}}" target="_blank" class = "github">[github]</a>
-								<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "- Hide Description" || "+ Show Description"}}</md-button>
-								<div ng-if="buttonStatus" class="fade">
-									<p>{{CVproduct.description}}</br></br></p>
-								</div>
-							</li>
-						</ul>
-					</p>
+					<ul>
+						<li ng-repeat="CVproduct in resumeCtrl.CVproducts">
+							<div id="projIMG" ng-if="buttonStatus" class="fade">
+								<img src="{{CVproduct.img_path}}" height="220px"/>
+							</div>
+							<a ng-href="{{CVproduct.page_path}}" target="_blank">{{CVproduct.name}}</a> 
+							<a href="{{CVproduct.github_link}}" target="_blank" class = "github">[github]</a>
+							<md-button ng-click="buttonStatus = !buttonStatus">{{buttonStatus && "- Hide Description" || "+ Show Description"}}</md-button>
+							<div ng-if="buttonStatus" class="fade">
+								<p style="white-space: pre-line">{{CVproduct.description}}</br></br></p>
+							</div>
+						</li>
+					</ul>
 				</div>
 				</br>
 				<div id="gba">
 					<h3>GBA Game (C):</h3>
-					<p>
-						<ul>
-							<li><a href="projects\gba\index.html" target="_blank">GBA Game: Be A Man V1.0</a> <a href="https://github.com/all4win/gba_game" target="_blank" class = "github">[github]</a></li>
-						</ul>
-					</p>
+					<ul>
+						<li><a href="projects\gba\index.html" target="_blank">GBA Game: Be A Man V1.0</a> <a href="https://github.com/all4win/gba_game" target="_blank" class = "github">[github]</a></li>
+					</ul>
+				</div>
+				<div id="moreInfo">
+					<h2>More Info:</h2>
+					<p> For more information of the projects I have done, please visit my github: <a href="https://github.com/all4win"><i>all4win</i></a></p>
 				</div>
 			</div>
 		</div>
